@@ -1,15 +1,44 @@
+import { FC, useEffect } from 'react';
+
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
-import { FC } from 'react';
+
+import { useDispatch, useSelector } from '../../services/store';
+import { fetchFeeds } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
 
-  if (!orders.length) {
+  const { orders, isLoading, error } = useSelector((state) => state.feed);
+
+  const handleGetFeeds = () => {
+    dispatch(fetchFeeds());
+  };
+
+  useEffect(() => {
+    dispatch(fetchFeeds());
+
+    dispatch({
+      type: 'socket/connect',
+      payload: {
+        url: 'wss://norma.education-services.ru/api/orders/all'
+      }
+    });
+
+    return () => {
+      dispatch({
+        type: 'socket/disconnect'
+      });
+    };
+  }, [dispatch]);
+
+  if (isLoading && !orders.length) {
     return <Preloader />;
   }
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };

@@ -8,7 +8,7 @@ import {
   updateUserApi
 } from '../../utils/burger-api';
 
-import { setCookie } from '../../utils/cookie';
+import { deleteCookie, setCookie } from '../../utils/cookie';
 
 import { TUser } from '../../utils/types';
 
@@ -70,6 +70,7 @@ export const updateUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk('user/logout', async () => {
   await logoutApi();
   localStorage.removeItem('refreshToken');
+  deleteCookie('accessToken');
 });
 
 const userSlice = createSlice({

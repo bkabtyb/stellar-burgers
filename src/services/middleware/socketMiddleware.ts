@@ -45,8 +45,6 @@ export const socketMiddleware: Middleware = (store) => (next) => (action) => {
 
     sockets[socketName] = socket;
 
-    socket.onopen = () => {};
-
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);

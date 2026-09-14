@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { TConstructorIngredient } from '@utils-types';
@@ -22,6 +22,13 @@ export const BurgerConstructor: FC = () => {
   const orderModalData = useSelector((state) => state.order.order);
 
   const orderError = useSelector((state) => state.order.error);
+
+  useEffect(
+    () => () => {
+      dispatch(clearOrder());
+    },
+    [dispatch]
+  );
 
   const price = useMemo(
     () =>

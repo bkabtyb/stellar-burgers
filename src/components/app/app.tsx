@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import '../../index.css';
 import styles from './app.module.css';
@@ -9,6 +9,7 @@ import {
   IngredientDetails,
   Modal,
   ProtectedRoute,
+  AuthorizedRoute,
   OrderInfo
 } from '@components';
 import { Preloader } from '@ui';
@@ -32,6 +33,7 @@ import { getUser, authChecked } from '../../services/slices/userSlice';
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const background = location.state?.background;
 
   const {
@@ -74,10 +76,41 @@ const App = () => {
             <Route path='/feed/:number' element={<OrderInfo />} />
             <Route path='/ingredients/:id' element={<IngredientDetails />} />
 
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/forgot-password' element={<ForgotPassword />} />
-            <Route path='/reset-password' element={<ResetPassword />} />
+            <Route
+              path='/login'
+              element={
+                <AuthorizedRoute>
+                  <Login />
+                </AuthorizedRoute>
+              }
+            />
+
+            <Route
+              path='/register'
+              element={
+                <AuthorizedRoute>
+                  <Register />
+                </AuthorizedRoute>
+              }
+            />
+
+            <Route
+              path='/forgot-password'
+              element={
+                <AuthorizedRoute>
+                  <ForgotPassword />
+                </AuthorizedRoute>
+              }
+            />
+
+            <Route
+              path='/reset-password'
+              element={
+                <AuthorizedRoute>
+                  <ResetPassword />
+                </AuthorizedRoute>
+              }
+            />
             <Route
               path='/profile'
               element={
@@ -99,7 +132,9 @@ const App = () => {
               path='/profile/orders/:number'
               element={
                 <ProtectedRoute>
-                  <OrderInfo />
+                  <Modal title='' onClose={() => navigate(-1)}>
+                    <OrderInfo />
+                  </Modal>
                 </ProtectedRoute>
               }
             />
@@ -112,7 +147,7 @@ const App = () => {
                 element={
                   <Modal
                     title='Детали ингредиента'
-                    onClose={() => window.history.back()}
+                    onClose={() => navigate(-1)}
                   >
                     <IngredientDetails />
                   </Modal>
@@ -122,7 +157,7 @@ const App = () => {
               <Route
                 path='/feed/:number'
                 element={
-                  <Modal title='' onClose={() => window.history.back()}>
+                  <Modal title='' onClose={() => navigate(-1)}>
                     <OrderInfo />
                   </Modal>
                 }
@@ -131,7 +166,7 @@ const App = () => {
               <Route
                 path='/profile/orders/:number'
                 element={
-                  <Modal title='' onClose={() => window.history.back()}>
+                  <Modal title='' onClose={() => navigate(-1)}>
                     <OrderInfo />
                   </Modal>
                 }

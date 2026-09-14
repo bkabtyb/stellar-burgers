@@ -1,5 +1,6 @@
 import { FC, SyntheticEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import { RegisterUI } from '@ui-pages';
 
 import { registerUser } from '../../services/slices/userSlice';
@@ -12,8 +13,11 @@ export const Register: FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const errorText = useSelector((state) => state.user.error);
+
+  const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -27,7 +31,7 @@ export const Register: FC = () => {
         })
       ).unwrap();
 
-      navigate('/profile');
+      navigate(from, { replace: true });
     } catch {}
   };
 

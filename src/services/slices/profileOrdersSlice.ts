@@ -21,10 +21,7 @@ const initialState: ProfileOrdersState = {
 
 export const fetchProfileOrders = createAsyncThunk(
   'profileOrders/fetchProfileOrders',
-  async () => {
-    const orders = await getOrdersApi();
-    return orders;
-  }
+  getOrdersApi
 );
 
 const profileOrdersSlice = createSlice({

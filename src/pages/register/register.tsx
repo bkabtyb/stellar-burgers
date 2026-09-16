@@ -1,18 +1,43 @@
 import { FC, SyntheticEvent, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import { RegisterUI } from '@ui-pages';
+
+import { registerUser } from '../../services/slices/userSlice';
+import { useDispatch, useSelector } from '../../services/store';
 
 export const Register: FC = () => {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const errorText = useSelector((state) => state.user.error);
+
+  const from = location.state?.from?.pathname || '/';
+
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+
+    try {
+      await dispatch(
+        registerUser({
+          name: userName,
+          email,
+          password
+        })
+      ).unwrap();
+
+      navigate(from, { replace: true });
+    } catch {}
   };
 
   return (
     <RegisterUI
-      errorText=''
+      errorText={errorText || ''}
       email={email}
       userName={userName}
       password={password}
